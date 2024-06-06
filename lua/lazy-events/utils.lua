@@ -2,7 +2,6 @@ local M = {}
 
 M.unpack = unpack or table.unpack
 
----Create a lazy event mapping.
 ---@param id string
 ---@param event? string|string[]
 ---@param pattern? string|string[]
@@ -52,6 +51,28 @@ function M.glob_any(exprs)
     end
 
     return false
+end
+
+---@param exprs { any: string[], all: string[] }
+function M.match_project(exprs)
+    local is_match = M.glob_any(exprs.any)
+    if #exprs.all > 0 then
+        is_match = is_match or M.glob_all(exprs.all)
+    end
+
+    return is_match
+end
+
+---@param fmt string
+---@param ... any
+function M.warn(fmt, ...)
+    vim.notify(string.format(fmt, ...), vim.log.levels.WARN, { title = "lazy-events" })
+end
+
+---@param fmt string
+---@param ... any
+function M.err(fmt, ...)
+    vim.notify(string.format(fmt, ...), vim.log.levels.ERROR, { title = "lazy-events" })
 end
 
 return M
