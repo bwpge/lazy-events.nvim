@@ -4,13 +4,15 @@ A Neovim plugin for simplifying custom event logic with [`lazy.nvim`](https://gi
 
 ## Overview
 
-The `lazy.nvim` plugin manager has a quite clever event system for lazy loading plugins. However, it is a bit tedious to hook custom event logic into the event mappings without a deliberate section of code to do so, and it needs to be done before plugin specs are loaded. This plugin seeks to make that process easier.
+The `lazy.nvim` plugin manager has a quite clever event system for lazy loading plugins. However, it is a bit tedious to hook custom event logic into the event mappings without some deliberate boilerplate, and it needs to be done before plugin specs are loaded. This plugin seeks to make that process easier.
 
 This plugin provides a simple interface for creating three styles of events, and adding them to `lazy.nvim` event mappings:
 
 - **simple**: a "wrapper" for any number of other events (e.g., `LazyFile` used by [LazyVim](https://www.lazyvim.org/) is a wrapper for `BufReadPost`, `BufNewFile`, and `BufWritePre`)
 - **projects**: detecting a certain structure of files or directories in the current working directory (for example, Rust projects typically contain `Cargo.toml` in the project root)
 - **custom**: arbitrary logic determining if the event should be fired, executed on any matching event
+
+See the [Examples](#examples) section for more information.
 
 ### Why?
 
@@ -126,7 +128,7 @@ vim.g.lazy_events_config = {
         TermUsed = { "TermOpen", "TermEnter", "TermLeave", "TermClose" },
     },
     -- projects use glob matches to check if event should fire (see `:h wildcards`)
-    -- these events are fired as `LazyProject:<key>`
+    -- these events are checked on DirChanged events and fired as `LazyProject:<key>`
     projects = {
         -- shorthand for "match any"
         docker = { "Dockerfile", "compose.y*ml", "docker-compose.y*ml" },
@@ -141,9 +143,9 @@ vim.g.lazy_events_config = {
     custom = {
         -- dumb, but illustrates basic usage
         OddBufNumber = {
-            event = "BufEnter", -- `event` argument to `vim.api.nvim_create_autocmd`
+            event = "BufEnter", -- event(s) to listen for
             pattern = "*", -- pattern to match on event
-            once = false, -- if this event should only fire once
+            once = false, -- if this event should only be checked once
             -- logic to determine if `OddBufNumber` event should fire (must return `true` to fire)
             cond = function(event)
                 -- `event` is from the `nvim_create_autocmd` callback function
@@ -162,7 +164,11 @@ require("lazy").setup({
 })
 ```
 
-### Example: LazyFile
+## Examples
+
+The following are examples of each type of event that can be configured.
+
+### Simple: LazyFile
 
 An easy example is adding [`LazyFile` events](https://github.com/LazyVim/LazyVim/blob/4d706f1bdc687f1d4d4cd962ec166c65c453633e/lua/lazyvim/util/plugin.lua#L84-L88) (as used in LazyVim). This event allows lazy loading plugins which require an open file to be useful, such as `todo-comments`, `gitsigns`, various LSP functions, etc.
 
@@ -191,7 +197,7 @@ require("lazy").setup({
 })
 ```
 
-### Example: LazyProject:cmake
+### LazyProject: CMake
 
 Some plugins are only useful in specific project types. Take [`cmake-tools.nvim`](https://github.com/Civitasv/cmake-tools.nvim) for example. This is a great plugin, but offers zero function outside of CMake projects. It has a fairly hefty cost to load, and installs a lot of commands, autocmds, and other hooks that we really don't need running and consuming resources if not in a CMake project. However, we might want to load automatically load this plugin when entering a CMake project.
 
@@ -236,7 +242,7 @@ return {
 }
 ```
 
-### Example: Custom event StartWithDir
+### Custom: StartWithDir
 
 Let's use LazyVim again for an example: [Editor | LazyVim - neo-tree.nvim](https://www.lazyvim.org/plugins/editor#neo-treenvim). If you view the full spec, the [`init` function](https://github.com/LazyVim/LazyVim/blob/4d706f1bdc687f1d4d4cd962ec166c65c453633e/lua/lazyvim/plugins/editor.lua#L46-L64) looks complicated, but is just checking to see if Neovim was started with a directory as the first argument.
 
