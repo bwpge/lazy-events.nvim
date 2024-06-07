@@ -73,7 +73,7 @@ You will need to make this plugin the first spec:
 -    "tpope/vim-sleuth",
 -    { "numToStr/Comment.nvim", opts = {} },
 -    -- ...
-+    { "bwpge/lazy-events.nvim", import = "lazy-events.plugins", lazy = false },
++    { "bwpge/lazy-events.nvim", import = "lazy-events.import", lazy = false },
 +    {
 +        "tpope/vim-sleuth",
 +        { "numToStr/Comment.nvim", opts = {} },
@@ -86,7 +86,7 @@ You will need to make this plugin the first spec:
  -- single plugin module
 -require("lazy").setup("user.plugins", {
 +require("lazy").setup({
-+    { "bwpge/lazy-events.nvim", import = "lazy-events.plugins", lazy = false },
++    { "bwpge/lazy-events.nvim", import = "lazy-events.import", lazy = false },
 +    { import = "user.plugins" },
 +}, {
         -- lazy.nvim options
@@ -94,7 +94,7 @@ You will need to make this plugin the first spec:
 
  -- multiple plugin modules
  require("lazy").setup({
-+    { "bwpge/lazy-events.nvim", import = "lazy-events.plugins", lazy = false },
++    { "bwpge/lazy-events.nvim", import = "lazy-events.import", lazy = false },
      { import = "user.plugins" },
      { import = "user.plugins.lsp" },
  }, {
@@ -104,7 +104,7 @@ You will need to make this plugin the first spec:
  -- LazyVim starter
  require("lazy").setup({
      spec = {
-+        { "bwpge/lazy-events.nvim", import = "lazy-events.plugins", lazy = false },
++        { "bwpge/lazy-events.nvim", import = "lazy-events.import", lazy = false },
          { "LazyVim/LazyVim", import = "lazyvim.plugins" },
          { import = "lazyvim.plugins.extras.lang.typescript" },
          -- ...
@@ -161,7 +161,7 @@ vim.g.lazy_events_config = {
 
 require("lazy").setup({
     spec = {
-        { "bwpge/lazy-events.nvim", import = "lazy-events.plugins", lazy = false },
+        { "bwpge/lazy-events.nvim", import = "lazy-events.import", lazy = false },
         -- ...
     },
     -- ...
@@ -189,7 +189,7 @@ vim.g.lazy_events_config = {
 
 require("lazy").setup({
     spec = {
-        { "bwpge/lazy-events.nvim", import = "lazy-events.plugins" },
+        { "bwpge/lazy-events.nvim", import = "lazy-events.import" },
         {
             "folke/todo-comments.nvim",
             -- load on LazyFile or given cmd
@@ -221,7 +221,7 @@ vim.g.lazy_events_opts = {
 
 require("lazy").setup({
     spec = {
-        { "bwpge/lazy-events.nvim", import = "lazy-events.plugins" },
+        { "bwpge/lazy-events.nvim", import = "lazy-events.import" },
         -- ...
     },
 })
@@ -282,7 +282,9 @@ Then use it in the `neo-tree.nvim` plugin spec:
 
 return {
     "nvim-neo-tree/neo-tree.nvim",
+    -- load on StartWithDir or given cmd
     event = "StartWithDir",
+    cmd = { "Neotree" },
     -- ...
 }
 ```
