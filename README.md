@@ -119,6 +119,10 @@ You will need to make this plugin the first spec:
 
 Configuration for this plugin is passed through `vim.g.lazy_events_config`. This is a bit odd, but there is not currently a way to pass data data to plugin specs through spec imports.
 
+> [!NOTE]
+>
+> `vim.g.lazy_events_config` is cleared after the plugin is finished processing the configuration. If you need to access it later, it can be found in `require("lazy-events.config").options`.
+
 ```lua
 -- in setup.lua or wherever you bootstrap lazy.nvim
 
